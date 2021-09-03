@@ -1,0 +1,7 @@
+# Project exclude paths
+/.gradle/
+/PageRank/task/build/
+/PageRank/task/out/
+/PageRank/task/out/production/classes/
+/Topics/Executors/Asynchronous email sending/out/
+/Topics/Executors/Asynchronous email sending/out/production/classes/
