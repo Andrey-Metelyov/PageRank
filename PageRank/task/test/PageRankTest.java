@@ -16,9 +16,9 @@ public class PageRankTest extends StageTest {
     @Override
     public CheckResult check(String reply, Object attach) {
         String[] res = reply.trim().split("\\s+");
-        if (res.length != (36 + 6)) {
+        if (res.length != (6 + 6 + 6)) {
             return CheckResult.wrong(
-                "Your program should output a matrix and a page rank so 42 numbers. Found " + res.length
+                "Your program should contain three page rank vectors so 18 numbers. Found " +  res.length
             );
         }
         int n = 6;
@@ -31,49 +31,70 @@ public class PageRankTest extends StageTest {
             {0    , 0    , 1./3., 0 , 0    , 0}
         };
 
-        double[][] matrix = new double[n][n];
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                double value;
-                try {
-                    value = Double.parseDouble(res[i * n + j].trim());
-                } catch (NumberFormatException ex) {
-                    return CheckResult.wrong(
-                        "Your program outputted something in matrix that is not a number!"
-                    );
-                }
-                matrix[i][j] = value;
-            }
-        }
+        double[] pageRank1Iter = new double[] {13.889, 13.889, 38.889, 27.778, 0.000, 5.556};
+        double[] pageRank10Iters = new double[] {15.945, 5.348, 40.106, 25.325, 0.000, 13.275};
+        double[] pageRankUpToPrecision = new double[] {16.000, 5.333, 40.000, 25.333, 0.000, 13.333};
 
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (Math.abs(L[i][j] - matrix[i][j]) > 1e-3) {
-                    return CheckResult.wrong(
-                        "The matrix you outputted is incorrect."
-                    );
-                }
-            }
-        }
-
+        // 1 iter
         double[] pageRank = new double[n];
-        for (int i = n * n; i < (n * n + n); ++i) {
+        for (int i = 0; i < n; ++i) {
             double value;
             try {
                 value = Double.parseDouble(res[i].trim());
             } catch (NumberFormatException ex) {
                 return CheckResult.wrong(
-                    "Your program outputted something which is not a number in PageRank!"
+                    "Your program outputted something which is not a number!"
                 );
             }
-            pageRank[i - n * n] = value;
+            pageRank[i] = value;
         }
 
-        double[] truePageRank = new double[] {16.000, 5.333, 40.000, 25.333, 0.000, 13.333};
         for (int i = 0; i < n; ++i) {
-            if (Math.abs(truePageRank[i] - pageRank[i]) > 1e-3) {
+            if (Math.abs(pageRank1Iter[i] - pageRank[i]) > 1e-2) { // Some computers have different ram for java. Max is 1e-5
                 return CheckResult.wrong(
-                    "The page rank you outputted is incorrect."
+                    "The first Page Rank in your output is incorrect."
+                );
+            }
+        }
+
+        // 10 iters
+        for (int i = n; i < n * 2; ++i) {
+            double value;
+            try {
+                value = Double.parseDouble(res[i].trim());
+            } catch (NumberFormatException ex) {
+                return CheckResult.wrong(
+                    "Your program outputted something which is not a number!"
+                );
+            }
+            pageRank[i - n] = value;
+        }
+
+        for (int i = 0; i < n; ++i) {
+            if (Math.abs(pageRank10Iters[i] - pageRank[i]) > 1e-2) {
+                return CheckResult.wrong(
+                    "The second Page Rank you outputted is incorrect."
+                );
+            }
+        }
+
+        // up to precision
+        for (int i = n * 2; i < n * 3; ++i) {
+            double value;
+            try {
+                value = Double.parseDouble(res[i].trim());
+            } catch (NumberFormatException ex) {
+                return CheckResult.wrong(
+                    "Your program outputted something which is not a number!"
+                );
+            }
+            pageRank[i - n * 2] = value;
+        }
+
+        for (int i = 0; i < n; ++i) {
+            if (Math.abs(pageRankUpToPrecision[i] - pageRank[i]) > 1e-2) {
+                return CheckResult.wrong(
+                    "The third Page Rank you outputted is incorrect."
                 );
             }
         }

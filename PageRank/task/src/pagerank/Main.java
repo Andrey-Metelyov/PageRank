@@ -17,6 +17,62 @@ public class Main {
                 {0, 0, 0, 0, 0, 0},
                 {0, 0, 1. / 3., 0, 0, 0}
         };
+        method2(L);
+    }
+
+    private static void method2(double[][] L) {
+        double[] r = new double[6];
+        for (int i = 0; i < r.length; i++) {
+            r[i] = 1.00;
+            r[i] = 100 * r[i] / 6;
+        }
+        Matrix m = new Matrix(L);
+//        m.print(0, 3);
+
+        Matrix r0 = new Matrix(r, 1).transpose();
+//        r0.print(0, 3);
+
+        Matrix r1 = m.times(r0);
+//        r1.print(0, 3);
+
+        double[] res = r1.getColumnPackedCopy();
+        for (double x : res) {
+            System.out.println(new DecimalFormat("#0.000").format(x));
+        }
+        System.out.println();
+
+//        System.out.println("prevR.minus(nextR).normInf():");
+//        System.out.println(r0.minus(r1).normInf());
+
+        for (int i = 0; i < 10; i++) {
+            r0 = r1;
+            r1 = m.times(r0);
+        }
+
+        res = r1.getColumnPackedCopy();
+        for (double x : res) {
+            System.out.println(new DecimalFormat("#0.000").format(x));
+        }
+        System.out.println();
+
+//        System.out.println("prevR.minus(nextR).normInf():");
+//        System.out.println(r0.minus(r1).normInf());
+
+        while (r0.minus(r1).normInf() > 0.01) {
+            r0 = r1;
+            r1 = m.times(r0);
+        }
+
+        res = r1.getColumnPackedCopy();
+        for (double x : res) {
+            System.out.println(new DecimalFormat("#0.000").format(x));
+        }
+
+//        System.out.println("prevR.minus(nextR).normInf():");
+//        System.out.println(r0.minus(r1).normInf());
+    }
+
+    private static void method1(double[][] L) {
 
         Matrix m = new Matrix(L);
         m.print(0, 3);
